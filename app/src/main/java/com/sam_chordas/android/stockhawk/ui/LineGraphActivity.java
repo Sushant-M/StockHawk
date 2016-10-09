@@ -13,7 +13,9 @@ import butterknife.ButterKnife;
 
 public class LineGraphActivity extends AppCompatActivity {
 
-    @BindView(R.id.Symbol)TextView Symbol;
+    @BindView(R.id.name) TextView name;
+    @BindView(R.id.change) TextView change;
+    @BindView(R.id.price) TextView price;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +24,11 @@ public class LineGraphActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         Intent intent = getIntent();
         String sym = intent.getStringExtra("Symbol");
-        Symbol.setText(sym);
+        String ch = intent.getStringExtra("Percent_change");
+        String pr = intent.getStringExtra("Bid_price");
+        change.setText(ch);
+        price.setText(pr);
+        name.setText(sym);
     }
+
 }

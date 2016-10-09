@@ -88,10 +88,16 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
               @Override public void onItemClick(View v, int position) {
                 // do something on item click
                   mCursor.moveToPosition(position);
-                int k = mCursor.getColumnIndex("symbol");
+                int k = mCursor.getColumnIndex(QuoteColumns.SYMBOL);
+                int p = mCursor.getColumnIndex(QuoteColumns.BIDPRICE);
+                int l = mCursor.getColumnIndex(QuoteColumns.PERCENT_CHANGE);
+                String pr = mCursor.getString(p);
                 String sy = mCursor.getString(k);
+                String ch = mCursor.getString(l);
                 Intent intent = new Intent(getApplicationContext(), LineGraphActivity.class);
                 intent.putExtra("Symbol",sy);
+                intent.putExtra("Bid_price",pr);
+                intent.putExtra("Percent_change",ch);
                 startActivity(intent);
               }
             }));
