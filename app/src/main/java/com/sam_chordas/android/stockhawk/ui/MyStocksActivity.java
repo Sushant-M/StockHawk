@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,6 +53,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
   private Context mContext;
   private Cursor mCursor;
   boolean isConnected;
+    private String TAG = "Stocks Activity";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +78,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         networkToast();
       }
     }
-    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+    final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
     getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
 
@@ -84,9 +86,12 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this,
             new RecyclerViewItemClickListener.OnItemClickListener() {
               @Override public void onItemClick(View v, int position) {
-                //TODO:
                 // do something on item click
+                  mCursor.moveToPosition(position);
+                int k = mCursor.getColumnIndex("symbol");
+                String sy = mCursor.getString(k);
                 Intent intent = new Intent(getApplicationContext(), LineGraphActivity.class);
+                intent.putExtra("Symbol",sy);
                 startActivity(intent);
               }
             }));
@@ -136,6 +141,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     mItemTouchHelper.attachToRecyclerView(recyclerView);
 
     mTitle = getTitle();
+
     if (isConnected){
       long period = 3600L;
       long flex = 10L;

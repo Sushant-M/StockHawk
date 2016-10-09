@@ -28,6 +28,8 @@ public class StockIntentService extends IntentService {
     }
     // We can call OnRunTask from the intent service to force it to run immediately instead of
     // scheduling a task.
-    stockTaskService.onRunTask(new TaskParams(intent.getStringExtra("tag"), args));
+
+      stockTaskService.onRunTask(new TaskParams(intent.getStringExtra("tag"), args));
+
   }
 }

@@ -43,6 +43,11 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
     return vh;
   }
 
+  String getSymbol( Cursor cursor){
+    return cursor.getString(cursor.getColumnIndex("symbol"));
+  }
+
+
   @Override
   public void onBindViewHolder(final ViewHolder viewHolder, final Cursor cursor){
     viewHolder.symbol.setText(cursor.getString(cursor.getColumnIndex("symbol")));
@@ -101,6 +106,7 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
     public void onItemSelected(){
       itemView.setBackgroundColor(Color.LTGRAY);
     }
+
 
     @Override
     public void onItemClear(){
