@@ -13,4 +13,5 @@
     <string name="stock_price">Stock Price</string>
     <string name="up_down">Up / Down</string>
     <string name="name">Name</string>
+    <string name="past_stock">Show past stock prices</string>
 </resources>
