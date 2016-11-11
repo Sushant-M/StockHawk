@@ -53,7 +53,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
   private Context mContext;
   private Cursor mCursor;
   boolean isConnected;
-    private String TAG = "Stocks Activity";
+  private String TAG = "Stocks Activity";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
