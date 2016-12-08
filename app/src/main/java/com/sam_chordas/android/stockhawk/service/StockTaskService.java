@@ -32,6 +32,7 @@ public class StockTaskService extends GcmTaskService{
   private Context mContext;
   private StringBuilder mStoredSymbols = new StringBuilder();
   private boolean isUpdate;
+  private String INVALID_COMPANY = "400";
 
   public StockTaskService(){}
 
@@ -112,6 +113,7 @@ public class StockTaskService extends GcmTaskService{
       urlString = urlStringBuilder.toString();
       try{
         getResponse = fetchData(urlString);
+        Log.d("ATTENTION HEREEEEE",getResponse);
         result = GcmNetworkManager.RESULT_SUCCESS;
         try {
           ContentValues contentValues = new ContentValues();
@@ -121,7 +123,7 @@ public class StockTaskService extends GcmTaskService{
             mContext.getContentResolver().update(QuoteProvider.Quotes.CONTENT_URI, contentValues,
                 null, null);
           }
-          mContext.getContentResolver().applyBatch(QuoteProvider.AUTHORITY,
+              mContext.getContentResolver().applyBatch(QuoteProvider.AUTHORITY,
               Utils.quoteJsonToContentVals(getResponse));
         }catch (RemoteException | OperationApplicationException e){
           Log.e(LOG_TAG, "Error applying batch insert", e);
