@@ -30,7 +30,7 @@ public class Utils {
         if (count == 1){
           jsonObject = jsonObject.getJSONObject("results")
               .getJSONObject("quote");
-          if(!jsonObject.isNull("Bid")) {
+          if(!jsonObject.isNull("BookValue")) {
             batchOperations.add(buildBatchOperation(jsonObject));
           }
         } else{
@@ -39,7 +39,9 @@ public class Utils {
           if (resultsArray != null && resultsArray.length() != 0){
             for (int i = 0; i < resultsArray.length(); i++){
               jsonObject = resultsArray.getJSONObject(i);
-              batchOperations.add(buildBatchOperation(jsonObject));
+              if(!jsonObject.isNull("BookValue")) {
+                batchOperations.add(buildBatchOperation(jsonObject));
+              }
             }
           }
         }
