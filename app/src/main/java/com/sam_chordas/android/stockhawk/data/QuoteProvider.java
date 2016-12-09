@@ -1,5 +1,6 @@
 package com.sam_chordas.android.stockhawk.data;
 
+import android.content.Intent;
 import android.net.Uri;
 import net.simonvt.schematic.annotation.ContentProvider;
 import net.simonvt.schematic.annotation.ContentUri;
@@ -14,6 +15,9 @@ public class QuoteProvider {
   public static final String AUTHORITY = "com.sam_chordas.android.stockhawk.data.QuoteProvider";
 
   static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+  //public static final String ACTION_DATA_UPDATED = "com.sam_chordas.android.stockhawk.app.ACTION_DATA_UPDATES";
+
+  //Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED);
 
   interface Path{
     String QUOTES = "quotes";

@@ -32,7 +32,6 @@ public class StockTaskService extends GcmTaskService{
   private Context mContext;
   private StringBuilder mStoredSymbols = new StringBuilder();
   private boolean isUpdate;
-  private String INVALID_COMPANY = "400";
 
   public StockTaskService(){}
 

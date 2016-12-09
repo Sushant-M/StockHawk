@@ -54,6 +54,10 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
   private Cursor mCursor;
   boolean isConnected;
   private String TAG = "Stocks Activity";
+  private Intent mWidgetUpdate;
+  public static final String ACTION_DATA_UPDATED = "com.sam_chordas.android.stockhawk.app.ACTION_DATA_UPDATES";
+
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +67,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
 
     NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-    isConnected = activeNetwork != null &&
-        activeNetwork.isConnectedOrConnecting();
+    isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     setContentView(R.layout.activity_my_stocks);
     // The intent service is for executing immediate pulls from the Yahoo API
     // GCMTaskService can only schedule tasks, they cannot execute immediately
@@ -82,7 +85,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
     getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
 
-      recyclerView.setContentDescription("Show past stock details");
+    recyclerView.setContentDescription("Show past stock details");
     mCursorAdapter = new QuoteCursorAdapter(this, null);
     recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this,
             new RecyclerViewItemClickListener.OnItemClickListener() {
@@ -132,6 +135,8 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                     mServiceIntent.putExtra("tag", "add");
                     mServiceIntent.putExtra("symbol", input.toString());
                     startService(mServiceIntent);
+                    mWidgetUpdate = new Intent(ACTION_DATA_UPDATED);
+                    sendBroadcast(mWidgetUpdate);
                   }
                 }
               })
