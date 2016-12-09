@@ -30,7 +30,7 @@ public class Utils {
         if (count == 1){
           jsonObject = jsonObject.getJSONObject("results")
               .getJSONObject("quote");
-          if(!jsonObject.isNull("BookValue")) {
+          if(jsonObject.getString("BookValue") !="null") {
             batchOperations.add(buildBatchOperation(jsonObject));
           }
         } else{
