@@ -14,6 +14,7 @@ import android.widget.RemoteViews;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.rest.QuoteCursorAdapter;
 import com.sam_chordas.android.stockhawk.service.StockIntentService;
+import com.sam_chordas.android.stockhawk.service.WidgetService;
 
 /**
  * Created by sushant on 11/11/16.
@@ -32,11 +33,11 @@ public class StockWidgetProvider extends AppWidgetProvider {
             RemoteViews remoteView = new RemoteViews(context.getPackageName(),R.layout.widget_layout);
             Intent intent = new Intent(context,MyStocksActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context,0,intent,0);
-            remoteView.setOnClickPendingIntent(R.id.WidgetList,pendingIntent);
+            remoteView.setOnClickPendingIntent(R.id.Widget,pendingIntent);
 
             //Code to Display the stocks
-
-            remoteView.setRemoteAdapter(R.id.widget_list,intent);
+            Intent displayIntent = new Intent(context,WidgetService.class);
+            remoteView.setRemoteAdapter(R.id.widget_list,displayIntent);
         }
     }
 

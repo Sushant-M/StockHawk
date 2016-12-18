@@ -37,6 +37,9 @@
             </intent-filter>
         </service>
         <service android:name=".service.StockIntentService" />
+        <service
+            android:name=".service.WidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <receiver android:name=".ui.StockWidgetProvider" >
             <intent-filter>
