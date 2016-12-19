@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:id="@+id/Widget">
-<ListView
+              android:layout_height="match_parent">
+<TextView
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/widget_list">
-</ListView>
-    <TextView
-        android:id="@+id/empty_view"
+    android:layout_height="wrap_content"
+    android:text="@string/stocks_widget"
+    android:padding="@dimen/activity_vertical_margin"
+    android:textColor="@color/material_blue_700"
+    android:textSize="18sp"/>
+    <ListView
+        android:id="@+id/widgetList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="@string/empty_list"
-        android:textColor="#ffffff"
-        android:textSize="20sp"
-        android:visibility="gone" />
+        android:textColor="@color/material_blue_700"
+        tools:listitem="@layout/widget_element"/>
 </LinearLayout>

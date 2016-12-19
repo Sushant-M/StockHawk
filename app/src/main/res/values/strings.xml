@@ -15,4 +15,7 @@
     <string name="name">Name</string>
     <string name="past_stock">Show past stock prices</string>
     <string name="empty_list">Empty List</string>
+    <string name="stocks_widget">Stocks Widget</string>
+    <string name="sym">symbol</string>
+    <string name="bid_price">bid_price</string>
 </resources>

@@ -3,11 +3,14 @@ package com.sam_chordas.android.stockhawk.service;
 import android.app.IntentService;
 import android.app.LauncherActivity;
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Binder;
 import android.util.Log;
+import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -15,6 +18,7 @@ import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteDatabase;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
+import com.sam_chordas.android.stockhawk.ui.LineGraphActivity;
 
 import java.util.ArrayList;
 
@@ -25,103 +29,104 @@ import static com.sam_chordas.android.stockhawk.data.QuoteProvider.AUTHORITY;
  */
 
 public class WidgetService extends RemoteViewsService {
+
+    public String TAG = getClass().getSimpleName();
+    private final static String[] STOCK_COLUMNS = {
+            QuoteColumns._ID,
+            QuoteColumns.BIDPRICE,
+            QuoteColumns.SYMBOL,
+            QuoteColumns.CHANGE,
+            QuoteColumns.PERCENT_CHANGE,
+            QuoteColumns.ISUP
+    };
+
+    private final int INDEX_ID = 0;
+    private final int INDEX_SYMBOL = 1;
+    private final int INDEX_BIDPRICE = 2;
+    private final int INDEX_PERCENT_CHANGE = 3;
+
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new StackRemoteViewsFactory(this.getApplicationContext(),intent);
+
+        return new RemoteViewsFactory() {
+
+            private Cursor data = null;
+
+            @Override
+            public void onCreate() {
+            }
+
+            @Override
+            public void onDataSetChanged() {
+                if (data != null)
+                    data.close();
+                final long identityToken = Binder.clearCallingIdentity();
+                //Same as while calling in the main activity.
+                data = getContentResolver().query(
+                        QuoteProvider.Quotes.CONTENT_URI,
+                        STOCK_COLUMNS,
+                        QuoteColumns.ISCURRENT + "=?",
+                        new String[]{"1"},
+                        null
+                );
+                Binder.restoreCallingIdentity(identityToken);
+            }
+
+            @Override
+            public void onDestroy() {
+                if (data != null) {
+                    data.close();
+                    data = null;
+                }
+            }
+
+            @Override
+            public int getCount() {
+                return (data == null) ? 0 : data.getCount();
+            }
+
+            @Override
+            public RemoteViews getViewAt(int position) {
+                if (position == AdapterView.INVALID_POSITION ||
+                        data == null || !data.moveToPosition(position)) {
+                    return null;
+                }
+                RemoteViews views = new RemoteViews(getPackageName(), R.layout.list_item_quote);
+
+                String stockSymbols, bidPrice;
+                stockSymbols = data.getString(INDEX_SYMBOL);
+                bidPrice = data.getString(INDEX_BIDPRICE);
+
+                views.setTextViewText(R.id.stock_symbol, stockSymbols);
+                views.setTextViewText(R.id.bid_price, bidPrice);
+                Log.d(TAG,stockSymbols);
+                views.setTextViewText(R.id.change, data.getString(INDEX_PERCENT_CHANGE));
+
+                return views;
+            }
+
+            @Override
+            public RemoteViews getLoadingView() {
+                return new RemoteViews(getPackageName(), R.layout.list_item_quote);
+            }
+
+            @Override
+            public int getViewTypeCount() {
+                return 1;
+            }
+
+            @Override
+            public long getItemId(int position) {
+                if (data.moveToPosition(position))
+                    return data.getLong(INDEX_ID);
+                return position;
+            }
+
+            @Override
+            public boolean hasStableIds() {
+                return true;
+            }
+        };
     }
-    class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
-        private Context mContext;
-        private Cursor mCursor;
-        private int mAppWidgetId;
-        private ArrayList<String> List = new ArrayList();
-
-        public StackRemoteViewsFactory(Context context, Intent intent) {
-            mContext = context;
-            mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-                    AppWidgetManager.INVALID_APPWIDGET_ID);
-            populateList();
-        }
-
-        private void populateList() {
-            int index = mCursor.getColumnIndex("symbol");
-            int val = mCursor.getColumnIndex("bid_price");
-            Uri uri = Uri.parse("content://" + AUTHORITY);
-            String projection[] =
-                            {QuoteColumns._ID,
-                            QuoteColumns.BIDPRICE,
-                            QuoteColumns.CHANGE};
-            mCursor = mContext.getContentResolver().query(uri, null, null, null, null);
-
-            while(mCursor.moveToNext()){
-                String stock_name = mCursor.getString(index);
-                String stock_value = mCursor.getString(val);
-                List.add(stock_name + "   " +stock_value);
-            }
-        }
-
-        @Override
-        public void onCreate() {
-
-        }
-
-        @Override
-        public void onDataSetChanged() {
-            if (mCursor != null) {
-                mCursor.close();
-            }
-
-            Uri uri = Uri.parse("content://" + AUTHORITY);
-            String projection[] =
-                    {QuoteColumns._ID,
-                    QuoteColumns.BIDPRICE,
-                    QuoteColumns.CHANGE};
-                     mCursor = mContext.getContentResolver().query(uri, null, null,
-                    null, null);
-        }
-
-        @Override
-        public void onDestroy() {
-            if (mCursor != null) {
-                mCursor.close();
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return List.size();
-        }
-
-        @Override
-        public RemoteViews getViewAt(int position) {
-            final RemoteViews remoteView = new RemoteViews(
-                    mContext.getPackageName(), R.layout.widget_layout);
-            String value = List.get(position);
-            remoteView.setTextViewText(R.id.content, value);
-            Log.d("YOLO",value);
-            return null;
-        }
-
-        @Override
-        public RemoteViews getLoadingView() {
-            return null;
-        }
-
-        @Override
-        public int getViewTypeCount() {
-            return 0;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return false;
-        }
-    }
 }
-
-
