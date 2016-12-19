@@ -11,6 +11,7 @@ import android.widget.RemoteViewsService;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
+import com.sam_chordas.android.stockhawk.ui.LineGraphActivity;
 
 /**
  * Created by sushant on 11/12/16.
@@ -86,15 +87,23 @@ public class WidgetService extends RemoteViewsService {
                 }
                 RemoteViews views = new RemoteViews(getPackageName(), R.layout.list_item_quote);
 
-                String stockSymbols, bidPrice;
+                String stockSymbols, bidPrice, perChange;
                 stockSymbols = mCursor.getString(INDEX_SYMBOL);
                 bidPrice = mCursor.getString(INDEX_BIDPRICE);
-
+                perChange = mCursor.getString(INDEX_PERCENT_CHANGE);
                 views.setTextViewText(R.id.stock_symbol, stockSymbols);
                 views.setTextViewText(R.id.bid_price, bidPrice);
                 Log.d(TAG,stockSymbols);
-                views.setTextViewText(R.id.change, mCursor.getString(INDEX_PERCENT_CHANGE));
+                views.setTextViewText(R.id.change, perChange);
 
+                /*
+                //Code to start detail activity out of widget
+                Intent detailIntent = new Intent(getApplicationContext(), LineGraphActivity.class);
+                detailIntent.putExtra("Symbol",stockSymbols);
+                detailIntent.putExtra("Bid_price",bidPrice);
+                detailIntent.putExtra("Percent_change",perChange);
+                views.setOnClickFillInIntent(R.id.widgetList, detailIntent);
+                */
                 return views;
             }
 
