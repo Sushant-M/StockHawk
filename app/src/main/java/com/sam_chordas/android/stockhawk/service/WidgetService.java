@@ -21,6 +21,7 @@ public class WidgetService extends RemoteViewsService {
 
     public String TAG = getClass().getSimpleName();
 
+    //Projections for querying the data
     private final static String[] STOCK_COLUMNS = {
             QuoteColumns._ID,
             QuoteColumns.BIDPRICE,
@@ -30,6 +31,7 @@ public class WidgetService extends RemoteViewsService {
             QuoteColumns.ISUP
     };
 
+    //Indices of various columns
     private final int INDEX_ID = 0;
     private final int INDEX_SYMBOL = 2;
     private final int INDEX_BIDPRICE = 1;
@@ -51,7 +53,7 @@ public class WidgetService extends RemoteViewsService {
                 if (mCursor != null)
                     mCursor.close();
                 final long identityToken = Binder.clearCallingIdentity();
-                //Same as while calling in the main activity.
+                //Querying the content provider.
                 mCursor = getContentResolver().query(
                         QuoteProvider.Quotes.CONTENT_URI,
                         STOCK_COLUMNS,
@@ -59,6 +61,7 @@ public class WidgetService extends RemoteViewsService {
                         new String[]{"1"},
                         null
                 );
+                //Dont know what this does :/
                 Binder.restoreCallingIdentity(identityToken);
             }
 
@@ -81,10 +84,13 @@ public class WidgetService extends RemoteViewsService {
 
             @Override
             public RemoteViews getViewAt(int position) {
+                //Check to see if there are no errors
                 if (position == AdapterView.INVALID_POSITION ||
                         mCursor == null || !mCursor.moveToPosition(position)) {
                     return null;
                 }
+
+                //Gave up trying to use my own view and used the original one instead
                 RemoteViews views = new RemoteViews(getPackageName(), R.layout.list_item_quote);
 
                 String stockSymbols, bidPrice, perChange;
@@ -96,14 +102,6 @@ public class WidgetService extends RemoteViewsService {
                 Log.d(TAG,stockSymbols);
                 views.setTextViewText(R.id.change, perChange);
 
-                /*
-                //Code to start detail activity out of widget
-                Intent detailIntent = new Intent(getApplicationContext(), LineGraphActivity.class);
-                detailIntent.putExtra("Symbol",stockSymbols);
-                detailIntent.putExtra("Bid_price",bidPrice);
-                detailIntent.putExtra("Percent_change",perChange);
-                views.setOnClickFillInIntent(R.id.widgetList, detailIntent);
-                */
                 return views;
             }
 
@@ -119,8 +117,9 @@ public class WidgetService extends RemoteViewsService {
 
             @Override
             public long getItemId(int position) {
-                if (mCursor.moveToPosition(position))
+                if (mCursor.moveToPosition(position)) {
                     return mCursor.getLong(INDEX_ID);
+                }
                 return position;
             }
 
