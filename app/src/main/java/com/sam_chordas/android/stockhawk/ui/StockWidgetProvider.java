@@ -56,9 +56,6 @@ public class StockWidgetProvider extends AppWidgetProvider {
         views.setRemoteAdapter(R.id.widgetList,new Intent(context,WidgetService.class));
     }
 
-
-
-
     @Override
     public void onEnabled(Context context) {
         super.onEnabled(context);

@@ -7,15 +7,15 @@
     <string name="action_change_units">Change Units</string>
     <string name="symbol_search">Symbol Search</string>
     <string name="content_test">Search for a Stock Symbol</string>
-    <string name="input_hint">FB</string>
-    <string name="input_prefill"></string>
-    <string name="network_toast">Uh-oh! This app requires an internet connection</string>
+    <string name="input_hint" translatable="false">FB</string>
+    <string name="network_toast" translatable="false">Uh-oh! This app requires an internet connection</string>
     <string name="stock_price">Stock Price</string>
     <string name="up_down">Up / Down</string>
     <string name="name">Name</string>
     <string name="past_stock">Show past stock prices</string>
     <string name="empty_list">Empty List</string>
     <string name="stocks_widget">Stocks Widget</string>
-    <string name="sym">symbol</string>
-    <string name="bid_price">bid_price</string>
+    <string name="sym" translatable="false">symbol</string>
+    <string name="bid_price" translatable="false">bid_price</string>
+    <string name="the_graph_of_stocks_over_a_period_of_time">The graph of stocks over a period of time</string>
 </resources>

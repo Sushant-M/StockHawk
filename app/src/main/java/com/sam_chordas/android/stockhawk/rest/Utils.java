@@ -30,16 +30,15 @@ public class Utils {
         if (count == 1){
           jsonObject = jsonObject.getJSONObject("results")
               .getJSONObject("quote");
-          if(jsonObject.getString("BookValue") !="null") {
+          if(!jsonObject.isNull("Currency")) {
             batchOperations.add(buildBatchOperation(jsonObject));
           }
         } else{
           resultsArray = jsonObject.getJSONObject("results").getJSONArray("quote");
-
           if (resultsArray != null && resultsArray.length() != 0){
             for (int i = 0; i < resultsArray.length(); i++){
               jsonObject = resultsArray.getJSONObject(i);
-              if(!jsonObject.isNull("BookValue")) {
+              if(!jsonObject.isNull("Currency")) {
                 batchOperations.add(buildBatchOperation(jsonObject));
               }
             }
@@ -50,6 +49,13 @@ public class Utils {
       Log.e(LOG_TAG, "String to JSON failed: " + e);
     }
     return batchOperations;
+  }
+
+  public static boolean isValid(JSONObject jsonObject){
+    if(!jsonObject.isNull("BookValue")){
+      return true;
+    }else
+      return false;
   }
 
   public static String truncateBidPrice(String bidPrice){
@@ -96,4 +102,5 @@ public class Utils {
     }
     return builder.build();
   }
+
 }

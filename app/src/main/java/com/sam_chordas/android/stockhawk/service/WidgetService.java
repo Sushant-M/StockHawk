@@ -1,13 +1,7 @@
 package com.sam_chordas.android.stockhawk.service;
 
-import android.app.IntentService;
-import android.app.LauncherActivity;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Binder;
 import android.util.Log;
 import android.widget.AdapterView;
@@ -16,13 +10,7 @@ import android.widget.RemoteViewsService;
 
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
-import com.sam_chordas.android.stockhawk.data.QuoteDatabase;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
-import com.sam_chordas.android.stockhawk.ui.LineGraphActivity;
-
-import java.util.ArrayList;
-
-import static com.sam_chordas.android.stockhawk.data.QuoteProvider.AUTHORITY;
 
 /**
  * Created by sushant on 11/12/16.
@@ -31,6 +19,7 @@ import static com.sam_chordas.android.stockhawk.data.QuoteProvider.AUTHORITY;
 public class WidgetService extends RemoteViewsService {
 
     public String TAG = getClass().getSimpleName();
+
     private final static String[] STOCK_COLUMNS = {
             QuoteColumns._ID,
             QuoteColumns.BIDPRICE,
@@ -41,8 +30,8 @@ public class WidgetService extends RemoteViewsService {
     };
 
     private final int INDEX_ID = 0;
-    private final int INDEX_SYMBOL = 1;
-    private final int INDEX_BIDPRICE = 2;
+    private final int INDEX_SYMBOL = 2;
+    private final int INDEX_BIDPRICE = 1;
     private final int INDEX_PERCENT_CHANGE = 3;
 
     @Override
@@ -50,7 +39,7 @@ public class WidgetService extends RemoteViewsService {
 
         return new RemoteViewsFactory() {
 
-            private Cursor data = null;
+            private Cursor mCursor = null;
 
             @Override
             public void onCreate() {
@@ -58,11 +47,11 @@ public class WidgetService extends RemoteViewsService {
 
             @Override
             public void onDataSetChanged() {
-                if (data != null)
-                    data.close();
+                if (mCursor != null)
+                    mCursor.close();
                 final long identityToken = Binder.clearCallingIdentity();
                 //Same as while calling in the main activity.
-                data = getContentResolver().query(
+                mCursor = getContentResolver().query(
                         QuoteProvider.Quotes.CONTENT_URI,
                         STOCK_COLUMNS,
                         QuoteColumns.ISCURRENT + "=?",
@@ -74,33 +63,37 @@ public class WidgetService extends RemoteViewsService {
 
             @Override
             public void onDestroy() {
-                if (data != null) {
-                    data.close();
-                    data = null;
+                //Free up memory being used by the cursor.
+                if (mCursor != null) {
+                    mCursor.close();
+                    mCursor = null;
                 }
             }
 
             @Override
             public int getCount() {
-                return (data == null) ? 0 : data.getCount();
+                if(mCursor == null){
+                    return 0;
+                }
+                return mCursor.getCount();
             }
 
             @Override
             public RemoteViews getViewAt(int position) {
                 if (position == AdapterView.INVALID_POSITION ||
-                        data == null || !data.moveToPosition(position)) {
+                        mCursor == null || !mCursor.moveToPosition(position)) {
                     return null;
                 }
                 RemoteViews views = new RemoteViews(getPackageName(), R.layout.list_item_quote);
 
                 String stockSymbols, bidPrice;
-                stockSymbols = data.getString(INDEX_SYMBOL);
-                bidPrice = data.getString(INDEX_BIDPRICE);
+                stockSymbols = mCursor.getString(INDEX_SYMBOL);
+                bidPrice = mCursor.getString(INDEX_BIDPRICE);
 
                 views.setTextViewText(R.id.stock_symbol, stockSymbols);
                 views.setTextViewText(R.id.bid_price, bidPrice);
                 Log.d(TAG,stockSymbols);
-                views.setTextViewText(R.id.change, data.getString(INDEX_PERCENT_CHANGE));
+                views.setTextViewText(R.id.change, mCursor.getString(INDEX_PERCENT_CHANGE));
 
                 return views;
             }
@@ -117,8 +110,8 @@ public class WidgetService extends RemoteViewsService {
 
             @Override
             public long getItemId(int position) {
-                if (data.moveToPosition(position))
-                    return data.getLong(INDEX_ID);
+                if (mCursor.moveToPosition(position))
+                    return mCursor.getLong(INDEX_ID);
                 return position;
             }
 
