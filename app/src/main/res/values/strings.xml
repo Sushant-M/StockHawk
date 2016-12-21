@@ -19,4 +19,6 @@
     <string name="bid_price" translatable="false">bid_price</string>
     <string name="the_graph_of_stocks_over_a_period_of_time">The graph of stocks over a period of time</string>
     <string name="no_data_available">No Data Available</string>
+    <string name="newStockString">Add new stock</string>
+    <string name="stock_duplicate_message">This stock is already saved!</string>
 </resources>
